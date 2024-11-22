@@ -31,6 +31,7 @@ jobs:
 
       - name: Deploy
         run: |
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl disable http-server'
           ssh ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} "
             echo 'export ENVIRONMENT=\"production\"' >> ~/.bashrc &&
             source ~/.bashrc &&
