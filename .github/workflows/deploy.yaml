@@ -31,16 +31,17 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'systemctl disable http-server'
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'rm -rf ~/simple-http-server'
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl disable http-server'
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo rm -rf ~/simple-http-server'
           ssh ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} "
             echo 'export ENVIRONMENT=\"production\"' >> ~/.bashrc &&
+            echo 'export ENVIRONMENT=\"production\"' | sudo tee -a /etc/environment &&
             source ~/.bashrc &&
             echo \$ENVIRONMENT
           "
           scp ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./html ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~/html/
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'mv ~/http-server.service /etc/systemd/system'
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'systemctl enable http-server'
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'systemctl restart http-server'
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo mv ~/http-server.service /etc/systemd/system'
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl enable http-server'
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl restart http-server'
