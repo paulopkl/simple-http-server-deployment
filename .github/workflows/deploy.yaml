@@ -36,8 +36,8 @@ jobs:
       - name: Move Files
         id: move_files
         run: |
-          scp ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
-          scp ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          rsync -avz ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          rsync -avz ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
 
       - name: Deploy
         run: |
