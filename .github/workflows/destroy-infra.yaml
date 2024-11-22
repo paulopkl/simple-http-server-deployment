@@ -30,11 +30,11 @@ jobs:
           tflint_version: v0.52.0
 
       - name: tflint init
-        working-directory: ../../infra
+        working-directory: ./infra
         run: tflint --init
 
       - name: Run TFLint
-        working-directory: ../../infra
+        working-directory: ./infra
         run: tflint --recursive --config "$(pwd)/.tflint.hcl"
 
   tfsec:
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ../../infra
+        working-directory: ./infra
     steps:
       - name: Run tfsec
         uses: aquasecurity/tfsec-sarif-action@21ded20e8ca120cd9d3d6ab04ef746477542a608
@@ -60,7 +60,7 @@ jobs:
     needs: tfsec
     defaults:
       run:
-        working-directory: ../../infra
+        working-directory: ./infra
     runs-on: ubuntu-latest
     steps:
       - name: Set up Terraform
@@ -76,7 +76,7 @@ jobs:
     needs: terraform-fmt
     defaults:
       run:
-        working-directory: ../../infra
+        working-directory: ./infra
     runs-on: ubuntu-latest
     steps:
       - name: Set up Terraform
