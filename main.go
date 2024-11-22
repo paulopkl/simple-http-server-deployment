@@ -107,8 +107,16 @@ func main() {
 	http.HandleFunc("GET /main", homepageHandler)
 	http.HandleFunc("GET /about", aboutHandler)
 
-	fmt.Println("Server started on port 8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	port := ""
+
+	if os.Getenv("ENVIRONMENT") == "production" {
+		port = ":80"
+	} else {
+		port = ":8080"
+	}
+
+	fmt.Printf("Server started on port %s", port)
+	if err := http.ListenAndServe(port, nil); err != nil {
 		panic(err)
 	}
 }

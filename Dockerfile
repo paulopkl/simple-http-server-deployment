@@ -31,8 +31,10 @@ COPY --from=builder /app/simple-http-server .
 
 COPY ./html ./html
 
+ENV ENVIRONMENT=production
+
 # Expose the port the application runs on
-EXPOSE 8080
+EXPOSE 80
 
 # Command to run the application
 CMD ["./simple-http-server"]

@@ -31,6 +31,7 @@ jobs:
 
       - name: Deploy
         run: |
+          ssh ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} "export ENVIRONMENT='production' && echo \$ENVIRONMENT"
           rsync -avz ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./html ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~/html/
