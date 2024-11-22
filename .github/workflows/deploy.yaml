@@ -38,7 +38,7 @@ jobs:
             source ~/.bashrc &&
             echo \$ENVIRONMENT
           "
-          scp -avz ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          scp ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./html ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~/html/
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo mv ~/http-server.service /etc/systemd/system'
