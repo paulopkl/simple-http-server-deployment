@@ -62,7 +62,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: '1.9.8'  # Specify your Terraform version here
+          terraform_version: '1.9.5'  # Specify your Terraform version here
 
       - name: Terraform Format 
         run: terraform fmt -check -recursive -diff
@@ -75,7 +75,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: '1.9.8'  # Specify your Terraform version here
+          terraform_version: '1.9.5'  # Specify your Terraform version here
 
       - name: Deploy
         run: |
