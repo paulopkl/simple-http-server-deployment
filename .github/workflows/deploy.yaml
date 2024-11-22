@@ -31,6 +31,7 @@ jobs:
 
       - name: Deploy
         run: |
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl stop http-server'
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl disable http-server'
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo rm -rf ~/simple-http-server'
           ssh ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} "
@@ -43,5 +44,6 @@ jobs:
           rsync -avz ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./html ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~/html/
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo mv ~/http-server.service /etc/systemd/system'
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl daemon-reload'
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl enable http-server'
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl restart http-server'

@@ -115,6 +115,7 @@ func main() {
 		port = ":8080"
 	}
 
+	fmt.Println("this is a inserted line, it worked!")
 	fmt.Printf("Server started on port %s", port)
 	if err := http.ListenAndServe(port, nil); err != nil {
 		panic(err)
