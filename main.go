@@ -60,6 +60,11 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	templ.ExecuteTemplate(w, "about", &Page{Title: "About TL;DR"})
 }
 
+func projectsHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Projects")
+	templ.ExecuteTemplate(w, "projects", &Page{Title: "Projects TL;DR"})
+}
+
 func init() {
 	log.WithFields(log.Fields{
 		"animal": "walrus",
@@ -106,6 +111,7 @@ func main() {
 
 	http.HandleFunc("GET /main", homepageHandler)
 	http.HandleFunc("GET /about", aboutHandler)
+	http.HandleFunc("GET /projects", projectsHandler)
 
 	port := ""
 
