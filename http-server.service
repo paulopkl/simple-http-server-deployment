@@ -6,9 +6,9 @@ Wants=network-online.target
 
 [Service]
 Type=exec
-User=root
+User=ubuntu
 WorkingDirectory=~
-ExecStart=~/simple-http-server
+ExecStart=/home/ubuntu/simple-http-server
 
 Restart=on-failure
 RestartSec=5
