@@ -29,19 +29,11 @@ jobs:
       - name: Build GO
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ~/simple-http-server main.go
 
-      - name: Stop Services
-        run: |
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl disable http-server'
-
-      - name: Move Files
-        id: move_files
+      - name: Deploy
         run: |
           rsync -avz ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
-
-      - name: Deploy
-        run: |
-          scp -r ./html ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          rsync -avz ./html ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~/html/
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo mv ~/http-server.service /etc/systemd/system'
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl enable http-server'
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl restart http-server'
