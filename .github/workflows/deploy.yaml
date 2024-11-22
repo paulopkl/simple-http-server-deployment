@@ -33,8 +33,8 @@ jobs:
           # rsync -avz ./http-server.service root@${{ secrets.AWS_REMOTE_MACHINE }}:~
       - name: Deploy
         run: |
-          scp ~/simple-http-server root@${{ secrets.AWS_REMOTE_MACHINE }}:~
-          scp ./http-server.service root@${{ secrets.AWS_REMOTE_MACHINE }}:~
-          ssh -t root@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo mv ~/http-server.service /etc/systemd/system'
-          ssh -t root@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl enable http-server'
-          ssh -t root@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl restart http-server'
+          scp ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          scp ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo mv ~/http-server.service /etc/systemd/system'
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl enable http-server'
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl restart http-server'
