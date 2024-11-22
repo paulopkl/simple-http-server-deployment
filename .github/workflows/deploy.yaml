@@ -24,16 +24,19 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_GITHUB_PRIVATE_KEY }}
           ssh-host: ${{ secrets.AWS_REMOTE_MACHINE }}
+          ssh-port: 22
 
       - name: Build GO
         run: GOOS=linux GOARCH=amd64 go build -o ~/simple-http-server main.go
 
+          # rsync -avz ~/simple-http-server root@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          # rsync -avz ./http-server.service root@${{ secrets.AWS_REMOTE_MACHINE }}:~
       - name: Deploy
         run: |
-          rsync -avz ~/simple-http-server root@${{ secrets.AWS_REMOTE_MACHINE }}:~
-          rsync -avz ./http-server.service root@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          scp ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
+          scp ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
 
-          ssh -t root@${{ secrets.AWS_REMOTE_MACHINE }} '
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} '
             sudo mv ~/http-server.service /etc/systemd/system
             sudo systemctl enable http-server
             sudo systemctl restart http-server
