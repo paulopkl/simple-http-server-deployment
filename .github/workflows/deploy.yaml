@@ -34,9 +34,9 @@ jobs:
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl disable http-server'
           ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo rm -rf ~/simple-http-server'
           ssh ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} "
-            echo 'export ENVIRONMENT=\"production\"' >> ~/.bashrc &&
-            source ~/.bashrc &&
-            echo \$ENVIRONMENT
+            sudo echo 'export ENVIRONMENT=\"production\"' >> ~/.bashrc &&
+            sudo source ~/.bashrc &&
+            sudo echo \$ENVIRONMENT
           "
           scp ~/simple-http-server ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
           rsync -avz ./http-server.service ubuntu@${{ secrets.AWS_REMOTE_MACHINE }}:~
