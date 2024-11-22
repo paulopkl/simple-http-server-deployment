@@ -26,7 +26,6 @@ jobs:
 
       - uses: terraform-linters/setup-tflint@v4
         name: Setup TFLint
-        working-directory: ../../infra
         with:
           tflint_version: v0.52.0
 
