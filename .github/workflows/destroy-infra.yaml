@@ -26,37 +26,42 @@ jobs:
 
       - uses: terraform-linters/setup-tflint@v4
         name: Setup TFLint
+        working-directory: ../../infra
         with:
           tflint_version: v0.52.0
 
       - name: tflint init
-        working-directory: infra
+        working-directory: ../../infra
         run: tflint --init
 
       - name: Run TFLint
-        working-directory: infra
+        working-directory: ../../infra
         run: tflint --recursive --config "$(pwd)/.tflint.hcl"
 
   tfsec:
     name: Run tfsec sarif report
     needs: tflint # This job depends on tflint job's success
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ../../infra
     steps:
       - name: Run tfsec
         uses: aquasecurity/tfsec-sarif-action@21ded20e8ca120cd9d3d6ab04ef746477542a608
-        working-directory: infra
         with:
           sarif_file: tfsec.sarif
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
-        working-directory: infra
         with:
           sarif_file: tfsec.sarif # Path to SARIF file relative to the root of the repository
 
   terraform-fmt:
     name: Terraform Format
     needs: tfsec
+    defaults:
+      run:
+        working-directory: ../../infra
     runs-on: ubuntu-latest
     steps:
       - name: Set up Terraform
@@ -70,6 +75,9 @@ jobs:
   deploy:
     name: Destruction
     needs: terraform-fmt
+    defaults:
+      run:
+        working-directory: ../../infra
     runs-on: ubuntu-latest
     steps:
       - name: Set up Terraform
