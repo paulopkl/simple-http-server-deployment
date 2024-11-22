@@ -8,7 +8,7 @@ Wants=network-online.target
 Type=exec
 User=ubuntu
 WorkingDirectory=~
-ExecStart=/home/ubuntu/simple-http-server
+ExecStart=sudo /home/ubuntu/simple-http-server
 
 Restart=on-failure
 RestartSec=5
