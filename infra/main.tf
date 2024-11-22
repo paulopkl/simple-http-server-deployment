@@ -13,6 +13,14 @@ terraform {
       version = "4.0.6"
     }
   }
+
+  backend "s3" {
+    bucket = "paulopkl-github-actions-tf"
+    key    = "terraform.tfstate"
+    region = "us-west-1"
+    # dynamodb_table = "terraform-lock-table" # Optional: DynamoDB table for state locking
+    encrypt = true # Enable state file encryption
+  }
 }
 
 provider "aws" {

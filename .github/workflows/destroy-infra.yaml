@@ -1,0 +1,126 @@
+name: Manual Infra destruction
+
+on:
+  workflow_dispatch:  # This makes the workflow manually triggerable via the GitHub UI
+    inputs:
+      environment:
+        description: 'Select the environment to detroy'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  tflint:
+    name: Run tflint terraoform linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout source code
+
+      - uses: terraform-linters/setup-tflint@v4
+        name: Setup TFLint
+        with:
+          tflint_version: v0.52.0
+
+      - name: tflint init
+        working-directory: infra
+        run: tflint --init
+
+      - name: Run TFLint
+        working-directory: infra
+        run: tflint --recursive --config "$(pwd)/.tflint.hcl"
+
+  tfsec:
+    name: Run tfsec sarif report
+    needs: tflint # This job depends on tflint job's success
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-sarif-action@21ded20e8ca120cd9d3d6ab04ef746477542a608
+        working-directory: infra
+        with:
+          sarif_file: tfsec.sarif
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        working-directory: infra
+        with:
+          sarif_file: tfsec.sarif # Path to SARIF file relative to the root of the repository
+
+  terraform-fmt:
+    name: Terraform Format
+    needs: tfsec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.9.8'  # Specify your Terraform version here
+
+      - name: Terraform Format 
+        run: terraform fmt -check -recursive -diff
+
+  deploy:
+    name: Destruction
+    needs: terraform-fmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.9.8'  # Specify your Terraform version here
+
+      - name: Deploy
+        run: |
+          echo "Destroy environment: ${{ github.event.inputs.environment }}"
+
+      # Add a step to remove SSH_Key_generates.tf and create SSH_Key_name.tf
+      - name: Modify Terraform files
+        run: |
+          # Remove SSH_Key_generates.tf if it exists
+          rm -f SSH_Key_generates.tf
+
+          # Create SSH_Key_name.tf with the specified content
+          echo 'locals {' > SSH_Key_name.tf
+          echo '  key_name = var.key_name' >> SSH_Key_name.tf
+          echo '}' >> SSH_Key_name.tf
+
+      - name: change folder
+        run: cd ./infra
+
+      - name: Terraform init
+        run: terraform init -upgrade
+      
+      - name: Terraform plan
+        id: plan
+        run: |
+          set +e
+          terraform plan -detailed-exitcode -input=false -out=tfplan
+          exit_code=$?
+          set -e
+          if [ $exit_code -eq 2 ]; then
+            echo "There are pending changes."
+            exit 0
+          elif [ $exit_code -eq 0 ]; then
+            echo "No changes detected in the Terraform plan."
+            exit 0
+          else
+            echo "Terraform plan failed."
+            exit 1
+          fi
+
+      - name: Notify failure
+        if: ${{ failure() }}
+        run: |
+          echo "Pipeline failed."
+
+      - name: Terraform apply
+        if: steps.plan.outcome == 'success'
+        run: terraform destroy -auto-approve tfplan

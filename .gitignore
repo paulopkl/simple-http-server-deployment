@@ -1,3 +1,4 @@
 Makefile
 */**/.terraform*
 */**/*.tfstate*
+*/**/backend-s3
