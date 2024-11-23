@@ -32,17 +32,17 @@ jobs:
             exit 1
           fi
 
-      - name: Set up GO
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.23.0"
-
       - name: Set up keys
         uses: kielabokkie/ssh-key-and-known-hosts-action@v1
         with:
           ssh-private-key: ${{ secrets.SSH_GITHUB_PRIVATE_KEY }}
           ssh-host: ${{ secrets.AWS_REMOTE_MACHINE }}
           ssh-port: 22
+
+      - name: Set up GO
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.23.0"
 
       - name: Build GO
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ~/simple-http-server main.go
