@@ -1,4 +1,4 @@
-name: Infra creation
+name: Manual Infra creation
 
 on:
   workflow_dispatch:  # This makes the workflow manually triggerable via the GitHub UI

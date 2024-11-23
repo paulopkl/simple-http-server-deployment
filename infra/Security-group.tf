@@ -25,6 +25,13 @@ resource "aws_security_group" "allow_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = -1 # ICMP type
+    to_port     = -1 # ICMP type
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow from any IP, change as needed
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
