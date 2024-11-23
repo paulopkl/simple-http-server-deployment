@@ -44,9 +44,19 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl stop http-server'
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo systemctl disable http-server'
-          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} 'sudo rm -rf ~/simple-http-server'
+          # Disable and Remove Service running
+          ssh -t ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} <<'EOF'
+            if systemctl list-units --type=service | grep -q "http-server.service"; then
+              sudo systemctl stop http-server
+              sudo systemctl disable http-server
+              sudo rm -rf ~/simple-http-server
+              echo "Service http-server stopped, disabled, and binary removed."
+            else
+              echo "Service http-server does not exist, skipping operations."
+            fi
+          EOF
+
+          # Set up Environment variables
           ssh ubuntu@${{ secrets.AWS_REMOTE_MACHINE }} "
             echo 'export ENVIRONMENT=\"production\"' >> ~/.bashrc &&
             echo 'export ENVIRONMENT=\"production\"' | sudo tee -a /etc/environment &&
