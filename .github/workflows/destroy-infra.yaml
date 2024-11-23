@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # This makes the workflow manually triggerable via the GitHub UI
     inputs:
       environment:
-        description: 'Select the environment to detroy'
+        description: 'Select the environment to destroy'
         required: true
         default: 'staging'
         type: choice
@@ -98,17 +98,6 @@ jobs:
       - name: Destroy Environment
         run: |
           echo "Destroy environment: ${{ github.event.inputs.environment }}"
-
-      # Add a step to remove SSH_Key_generates.tf and create SSH_Key_name.tf
-      - name: Modify Terraform files
-        run: |
-          # Remove SSH_Key_generates.tf if it exists
-          rm -f SSH_Key_generates.tf
-
-          # Create SSH_Key_name.tf with the specified content
-          echo 'locals {' > SSH_Key_name.tf
-          echo '  key_name = var.key_name' >> SSH_Key_name.tf
-          echo '}' >> SSH_Key_name.tf
 
       - name: Terraform init
         env:

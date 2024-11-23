@@ -1,3 +1,7 @@
+locals {
+  key_name = var.key_name
+}
+
 # Get the latest Ubuntu 24.04 AMI ID
 data "aws_ami" "ubuntu_24_04" {
   most_recent = true
