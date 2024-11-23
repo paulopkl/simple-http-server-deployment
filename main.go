@@ -55,6 +55,7 @@ func homepageHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Home")
 	templ.ExecuteTemplate(w, "main", &Page{Title: "Welcome to TL;DR"})
 }
+
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("About")
 	templ.ExecuteTemplate(w, "about", &Page{Title: "About TL;DR"})
@@ -63,6 +64,11 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 func projectsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Projects")
 	templ.ExecuteTemplate(w, "projects", &Page{Title: "Projects TL;DR"})
+}
+
+func whoHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Who")
+	templ.ExecuteTemplate(w, "who", &Page{Title: "Who TL;DR"})
 }
 
 func init() {
@@ -112,6 +118,7 @@ func main() {
 	http.HandleFunc("GET /main", homepageHandler)
 	http.HandleFunc("GET /about", aboutHandler)
 	http.HandleFunc("GET /projects", projectsHandler)
+	http.HandleFunc("GET /who", whoHandler)
 
 	port := ""
 
