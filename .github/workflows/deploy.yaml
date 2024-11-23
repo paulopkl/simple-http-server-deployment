@@ -19,17 +19,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Check Machine Reachability try 4 times
+      - name: Check if Machine IP is configured
+        shell: bash
         run: |
-          PING_COUNT=4
-
-          ping -c 1 ${{ secrets.AWS_REMOTE_MACHINE }}
-
-          echo "Pinging $PUBLIC_IP to check if the machine is reachable..."
-          if ping -c $PING_COUNT ${{ secrets.AWS_REMOTE_MACHINE }} > /dev/null 2>&1; then
-            echo "Machine is reachable."
-          else
-            echo "Error: Machine is not reachable." >&2
+          if [ -z "${{ secrets.AWS_REMOTE_MACHINE }}" ]; then
+            echo "Error: AWS_REMOTE_MACHINE secret is not set!"
             exit 1
           fi
 
