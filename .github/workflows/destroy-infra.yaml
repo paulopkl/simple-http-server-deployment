@@ -47,8 +47,8 @@ jobs:
       run:
         working-directory: ./infra
     steps:
-      # - name: Checkout repository
-      #   uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Run tfsec
         uses: aquasecurity/tfsec-sarif-action@v0.1.4
@@ -68,6 +68,9 @@ jobs:
         working-directory: infra
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
