@@ -13,8 +13,10 @@ on:
           - production
 
 permissions:
-  id-token: write
+  # id-token: write
   contents: read
+  actions: read
+  security-events: write
 
 jobs:
   tflint:
