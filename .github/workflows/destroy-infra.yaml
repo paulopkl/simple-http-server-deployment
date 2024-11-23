@@ -70,7 +70,7 @@ jobs:
     needs: tfsec
     defaults:
       run:
-        working-directory: ./infra
+        working-directory: infra
     runs-on: ubuntu-latest
     steps:
       - name: Set up Terraform
@@ -86,7 +86,7 @@ jobs:
     needs: terraform-fmt
     defaults:
       run:
-        working-directory: ./infra
+        working-directory: infra
     runs-on: ubuntu-latest
     steps:
       - name: Set up Terraform
@@ -108,9 +108,6 @@ jobs:
           echo 'locals {' > SSH_Key_name.tf
           echo '  key_name = var.key_name' >> SSH_Key_name.tf
           echo '}' >> SSH_Key_name.tf
-
-      - name: change folder
-        run: cd ./infra
 
       - name: Terraform init
         run: terraform init -upgrade
