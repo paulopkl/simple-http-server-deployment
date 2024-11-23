@@ -14,11 +14,11 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  # contents: read
 
 jobs:
   tflint:
-    name: Run tflint terraoform linter
+    name: Run tflint terraform linter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,18 +41,22 @@ jobs:
     name: Run tfsec sarif report
     needs: tflint # This job depends on tflint job's success
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infra
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Run tfsec
-        uses: aquasecurity/tfsec-sarif-action@21ded20e8ca120cd9d3d6ab04ef746477542a608
-        working-directory: infra
+        uses: aquasecurity/tfsec-sarif-action@v0.1.4
         with:
-          sarif_file: tfsec.sarif
+          sarif_file: ./infra/tfsec.sarif  
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
-        working-directory: infra
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: tfsec.sarif # Path to SARIF file relative to the root of the repository
+          sarif_file: ./infra/tfsec.sarif # Path to SARIF file relative to the root of the repository
 
   terraform-fmt:
     name: Terraform Format
@@ -96,10 +100,16 @@ jobs:
         run: cd ./infra
 
       - name: Terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform init -upgrade
       
       - name: Terraform plan
         id: plan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           set +e
           terraform plan -detailed-exitcode -input=false -out=tfplan
@@ -123,4 +133,7 @@ jobs:
 
       - name: Terraform apply
         if: steps.plan.outcome == 'success'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform apply -auto-approve tfplan

@@ -14,8 +14,8 @@ on:
 
 permissions:
   # id-token: write
-  contents: read
-  actions: read
+  # contents: read
+  # actions: read
   security-events: write
 
 jobs:
