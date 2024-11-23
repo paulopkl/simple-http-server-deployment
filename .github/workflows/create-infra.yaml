@@ -15,6 +15,7 @@ on:
 permissions:
   id-token: write
   # contents: read
+  security-events: write
 
 jobs:
   tflint:
@@ -61,8 +62,14 @@ jobs:
   terraform-fmt:
     name: Terraform Format
     needs: tfsec
+    defaults:
+      run:
+        working-directory: ./infra
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -71,19 +78,25 @@ jobs:
       - name: Terraform Format 
         run: terraform fmt -check -recursive -diff
 
-  deploy:
+  infra-creation:
     name: Deployment
     needs: terraform-fmt
+    defaults:
+      run:
+        working-directory: ./infra
     runs-on: ubuntu-latest
     steps:
+       - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: '1.9.5'  # Specify your Terraform version here
 
-      - name: Deploy
+      - name: Deploy Environment
         run: |
-          echo "Deploying to environment: ${{ github.event.inputs.environment }}"
+          echo "Deploying environment: ${{ github.event.inputs.environment }}"
 
       # Add a step to remove SSH_Key_generates.tf and create SSH_Key_name.tf
       - name: Modify Terraform files
@@ -95,9 +108,6 @@ jobs:
           echo 'locals {' > SSH_Key_name.tf
           echo '  key_name = var.key_name' >> SSH_Key_name.tf
           echo '}' >> SSH_Key_name.tf
-
-      - name: change folder
-        run: cd ./infra
 
       - name: Terraform init
         env:

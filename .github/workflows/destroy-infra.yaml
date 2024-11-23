@@ -13,9 +13,9 @@ on:
           - production
 
 permissions:
-  # id-token: write
   # contents: read
   # actions: read
+  id-token: write
   security-events: write
 
 jobs:
@@ -79,7 +79,7 @@ jobs:
       - name: Terraform Format 
         run: terraform fmt -check -recursive -diff
 
-  deploy:
+  infra-destruction:
     name: Destruction
     needs: terraform-fmt
     defaults:

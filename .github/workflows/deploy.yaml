@@ -6,6 +6,11 @@ on:
       - main
       - master
 
+permissions:
+  id-token: write
+  # contents: read
+  security-events: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,6 +18,19 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Check Machine Reachability try 4 times
+        run: |
+          PUBLIC_IP="${{ secrets.AWS_REMOTE_MACHINE }}"
+          PING_COUNT=4
+
+          echo "Pinging $PUBLIC_IP to check if the machine is reachable..."
+          if ping -c $PING_COUNT $PUBLIC_IP > /dev/null 2>&1; then
+            echo "Machine is reachable."
+          else
+            echo "Error: Machine is not reachable." >&2
+            exit 1
+          fi
 
       - name: Set up GO
         uses: actions/setup-go@v4
