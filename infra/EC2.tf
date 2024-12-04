@@ -24,6 +24,12 @@ resource "aws_instance" "simple_http_server" {
   subnet_id       = aws_subnet.public.id
   security_groups = [aws_security_group.allow_ssh.id]
 
+  user_data = <<-EOF
+    #!/bin/bash
+    sudo apt update -y
+    sudo apt install -y rsync
+  EOF
+
   tags = {
     Environment = "test"
     Name        = "simple_http_server for Github Deploy"
