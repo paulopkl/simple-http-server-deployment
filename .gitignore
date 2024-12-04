@@ -2,3 +2,5 @@ Makefile
 */**/.terraform*
 */**/*.tfstate*
 */**/backend-s3
+Dockerfile
+.dockerignore
