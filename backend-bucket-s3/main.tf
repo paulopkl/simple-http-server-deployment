@@ -8,16 +8,11 @@ terraform {
 }
 
 provider "aws" {
-  # Configuration options
-  region = "us-west-1"
-}
-
-locals {
-  bucketName = "paulopkl-github-actions-tf"
+  region = var.aws_region
 }
 
 resource "aws_s3_bucket" "example" {
-  bucket = local.bucketName
+  bucket = var.bucketName
 
   force_destroy = true
 
@@ -28,5 +23,5 @@ resource "aws_s3_bucket" "example" {
 }
 
 output "name" {
-  value = local.bucketName
+  value = var.bucketName
 }
