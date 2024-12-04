@@ -33,6 +33,11 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_GITHUB_PRIVATE_KEY }}
           ssh-host: ${{ secrets.AWS_REMOTE_MACHINE }}
           ssh-port: 22
+        
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y rsync
 
       - name: Set up GO
         uses: actions/setup-go@v4
